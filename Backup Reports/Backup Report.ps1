@@ -13,6 +13,14 @@ $WBSummary = Get-WBSummary
 $WBJobStartTime = $WBJob.StartTime
 $WBJobEndTime = $WBJob.EndTime
 
+# The job's own success and failure logs, ready to drop into the HTML email.
+function Get-BackupLogHtml($Path) {
+    If ($Path -and (Test-Path $Path)) {
+        (Get-Content $Path | ForEach-Object { [System.Net.WebUtility]::HtmlEncode($_) }) -join "<br>"
+    }
+}
+$WBJobSuccessLog = Get-BackupLogHtml $WBJob.SuccessLogPath
+$WBJobFailureLog = Get-BackupLogHtml $WBJob.FailureLogPath
 
 If ($WBSummary.LastBackupResultHR -eq 0) {
     $WBJobResult = "successful"
